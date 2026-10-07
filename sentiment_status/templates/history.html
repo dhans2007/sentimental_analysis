@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Analysis History — feeling?{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Hero Section -->
+  <section class="hero-section px-5 py-10 sm:py-14 rounded-2xl text-center">
+    <div class="mx-auto max-w-3xl">
+      <div class="eyebrow text-xs uppercase mb-3">Audit Trail</div>
+      <h1 class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Analysis <span class="muted">History.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed muted">
+        View past predictions, filter by tone, provide active-learning corrections, or export the complete history to CSV.
+      </p>
+    </div>
+  </section>
+
+  <!-- History Controls Bar -->
+  <div class="panel p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex items-center gap-3 flex-1 flex-wrap">
+      <div class="table-search-wrap flex-1 max-w-xs">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="history-search-input" placeholder="Search comments..." />
+      </div>
+      <select id="history-sentiment-filter" class="select-dropdown">
+        <option value="all">All Sentiments</option>
+        <option value="positive">Positive</option>
+        <option value="neutral">Neutral</option>
+        <option value="negative">Negative</option>
+      </select>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <a href="/api/history/export" class="secondary-button text-xs py-2 px-4 gap-2" title="Export all historical records to CSV">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </a>
+      <button id="clear-history-btn" class="btn-ghost-sm py-2 px-4 text-xs gap-1.5" title="Clear all stored analyses">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Clear All
+      </button>
+    </div>
+  </div>
+
+  <!-- History Items List -->
+  <div class="space-y-4" id="history-items-container">
+    {% if records %}
+      {% for r in records %}
+      <div class="panel p-5 sm:p-6 history-item-card" data-sentiment="{{ r.sentiment }}" data-text="{{ r.text | lower }}">
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-[var(--color-border)] mb-3 flex-wrap">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="badge-tag {{ r.sentiment }}">{{ r.sentiment | capitalize }}</span>
+            <span class="confidence-pill font-mono text-xs">{{ (r.confidence * 100) | round(1) }}% conf</span>
+            {% if r.emotion %}
+            <span class="badge-emotion text-xs py-1 px-2.5">{{ r.emotion }}</span>
+            {% endif %}
+          </div>
+          <span class="font-mono text-xs text-muted">{{ r.timestamp[:19].replace('T', ' ') }}</span>
+        </div>
+
+        <div class="text-sm sm:text-base leading-relaxed text-[var(--color-text)] mb-3">{{ r.text }}</div>
+
+        {% if r.aspects %}
+        <div class="flex items-center gap-2 flex-wrap mb-3">
+          <span class="text-xs muted font-mono">Aspects:</span>
+          {% for a in r.aspects %}
+          <span class="aspect-chip-sm">{{ a }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Active Learning Feedback Options -->
+        <div class="flex items-center justify-between pt-3 border-t border-[var(--color-border)] text-xs">
+          <span class="text-muted">Is this label correct?</span>
+          <div class="flex gap-2">
+            <button class="feedback-icon-btn btn-pos" data-text="{{ r.text }}" data-pred="{{ r.sentiment }}" data-target="positive" title="Mark as Positive">👍 Pos</button>
+            <button class="feedback-icon-btn btn-neu" data-text="{{ r.text }}" data-pred="{{ r.sentiment }}" data-target="neutral" title="Mark as Neutral">😐 Neu</button>
+            <button class="feedback-icon-btn btn-neg" data-text="{{ r.text }}" data-pred="{{ r.sentiment }}" data-target="negative" title="Mark as Negative">👎 Neg</button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="panel p-8 text-center">
+        <div class="text-4xl mb-3">📂</div>
+        <h3 class="text-lg font-bold text-[var(--color-text)] mb-1" style="font-family:var(--font-heading)">No analyses recorded yet</h3>
+        <p class="text-xs sm:text-sm muted max-w-sm mx-auto">Run a single analysis or upload a batch file to populate historical records.</p>
+        <a href="/" class="primary-button text-xs py-2 px-5 mt-4 inline-flex no-underline">Go to Analyzer</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

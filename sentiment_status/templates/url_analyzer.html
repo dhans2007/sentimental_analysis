@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}URL &amp; Web Scraper — feeling?{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Hero Section -->
+  <section class="hero-section px-5 py-10 sm:py-14 rounded-2xl text-center">
+    <div class="mx-auto max-w-3xl">
+      <div class="eyebrow text-xs uppercase mb-3">Web Article Scraper</div>
+      <h1 class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Web Page Tone <span class="muted">Analyzer.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed muted">
+        Extract, parse, and analyze any public web article or blog post URL into sentence-level sentiment heatmaps and an executive summary.
+      </p>
+    </div>
+  </section>
+
+  <!-- URL Input Panel -->
+  <div class="panel p-6 sm:p-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-[var(--color-border)]">
+      <h2 class="text-xl font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Enter Webpage / Article URL</h2>
+      <span class="text-xs muted">HTTP / HTTPS or Demo Presets</span>
+    </div>
+
+    <!-- Quick Preset Chips -->
+    <div class="preset-chips mb-4">
+      <span class="chips-label">Presets:</span>
+      <button class="chip" data-url="preset://iphone-review">📱 Hardware Review</button>
+      <button class="chip" data-url="preset://cloud-incident">⚠️ Incident Post-Mortem</button>
+      <button class="chip" data-url="preset://saas-launch">🚀 SaaS Product Launch</button>
+    </div>
+
+    <div class="url-bar-wrapper">
+      <div class="url-input-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <input type="url" id="target-url-input" placeholder="https://example.com/blog/product-review" value="preset://iphone-review" />
+      <button id="scrape-url-btn" class="primary-button text-sm py-2 px-5">
+        <span>Scrape &amp; Analyze</span>
+        <svg class="ml-1.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div id="url-loading-card" class="panel p-8 text-center hidden">
+    <div class="spinner-icon mb-3"></div>
+    <div class="font-bold text-base text-[var(--color-text)]">Scraping and analyzing webpage content...</div>
+    <p class="text-xs muted mt-1">Parsing DOM, extracting paragraphs, and evaluating tone across sentences</p>
+  </div>
+
+  <!-- Results Section -->
+  <div id="url-results-container" class="space-y-6 hidden">
+    <!-- Article Meta Header -->
+    <div class="panel p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="domain-tag text-xs font-mono text-muted mb-1" id="article-domain">techinsights.io</div>
+          <h2 class="text-xl sm:text-2xl font-bold text-[var(--color-text)]" id="article-title" style="font-family:var(--font-heading)">Article Title Loading...</h2>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="meta-pill" id="article-words">0 words</span>
+          <span class="meta-pill" id="article-readtime">1 min read</span>
+          <span class="meta-pill" id="article-sentences">0 sentences</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Top KPI Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="panel p-5 flex items-center gap-3">
+        <div class="kpi-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <span class="stat-mini-label">Overall Tone</span>
+          <div class="text-xl font-bold text-pos" id="url-overall-tone">Positive</div>
+        </div>
+      </div>
+
+      <div class="panel p-5 flex items-center gap-3">
+        <div class="kpi-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div>
+          <span class="stat-mini-label">Net Score</span>
+          <div class="text-xl font-bold text-[var(--color-text)]" id="url-nss-score">+33.4</div>
+        </div>
+      </div>
+
+      <div class="panel p-5 flex items-center gap-3">
+        <div class="kpi-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </div>
+        <div>
+          <span class="stat-mini-label">Ratio</span>
+          <div class="text-sm font-bold text-[var(--color-text)]" id="url-ratio-summary">66% Pos / 33% Neg</div>
+        </div>
+      </div>
+
+      <div class="panel p-5 flex items-center gap-3">
+        <div class="kpi-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/></svg>
+        </div>
+        <div>
+          <span class="stat-mini-label">Dominant Tone</span>
+          <div class="text-sm font-bold text-[var(--color-text)]" id="url-dominant-emotion">Joy &amp; Praise</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Row: Executive TL;DR & Aspect Coverage -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Executive Summary -->
+      <div class="panel p-6 sm:p-7">
+        <div class="flex items-center justify-between pb-3 border-b border-[var(--color-border)] mb-4">
+          <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Executive Summary</h3>
+          <span class="eyebrow text-xs">Auto-Generated</span>
+        </div>
+        <ul id="url-summary-bullets" class="summary-bullets-list">
+          <!-- Populated dynamically -->
+        </ul>
+      </div>
+
+      <!-- Aspect Topic Coverage -->
+      <div class="panel p-6 sm:p-7">
+        <div class="flex items-center justify-between pb-3 border-b border-[var(--color-border)] mb-4">
+          <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Aspects Mentioned</h3>
+          <span class="text-xs muted">Topic frequency</span>
+        </div>
+        <div id="url-aspects-list" class="aspects-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Sentence Heatmap & Quote Explorer -->
+    <div class="panel p-6 sm:p-7">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[var(--color-border)] mb-4">
+        <div>
+          <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Sentence Sentiment Heatmap</h3>
+          <span class="text-xs muted">Full article sentence-by-sentence tone breakdown</span>
+        </div>
+        <div>
+          <select id="sentence-filter-select" class="select-dropdown">
+            <option value="all">All Sentences</option>
+            <option value="positive">Positive Only</option>
+            <option value="negative">Negative Only</option>
+            <option value="neutral">Neutral Only</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sentence List -->
+      <div id="sentence-heatmap-list" class="sentence-heatmap-container">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

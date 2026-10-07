@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}feeling? — Real-Time Sentiment &amp; Tone Analyzer{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Hero Section -->
+  <section class="hero-section px-5 py-10 sm:py-14 rounded-2xl text-center">
+    <div class="mx-auto max-w-3xl">
+      <div class="eyebrow text-xs uppercase mb-3">Real-Time Tone Engine</div>
+      <h1 class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Tone is a clue.<br class="hidden sm:block" />Context is the <span class="muted">story.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed muted">
+        Sentiment analysis estimates whether language leans positive, negative, or neutral. It offers a useful first impression with token-level explainability and aspect breakdown.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Analyzer Panel -->
+  <div class="panel p-6 sm:p-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-border)] mb-5">
+      <div>
+        <h2 class="text-xl font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Analyze Language Tone</h2>
+        <p class="text-xs sm:text-sm muted mt-0.5">Type or paste text below to evaluate tone and emotional sentiment</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <label class="toggle-switch-label" title="Analyze automatically while typing">
+          <input type="checkbox" id="live-predict-toggle" checked />
+          <span class="toggle-slider"></span>
+          <span class="text-xs font-medium">Live Predict</span>
+        </label>
+        <button id="clear-input-btn" class="btn-ghost-sm" title="Clear input">Clear</button>
+      </div>
+    </div>
+
+    <!-- Quick Prompt Chips -->
+    <div class="preset-chips mb-4">
+      <span class="chips-label">Try Examples:</span>
+      <button class="chip" data-sample="The UI design is gorgeous and super snappy, but customer service was rude.">Mixed Aspect</button>
+      <button class="chip" data-sample="This app is absolutely amazing, the new update fixed all issues flawlessly! :D">Positive</button>
+      <button class="chip" data-sample="Worst update ever, the app keeps freezing and battery drain is terrible.">Negative</button>
+      <button class="chip" data-sample="The delivery was quick, but the packaging was damaged.">Subtle Balance</button>
+      <button class="chip" data-sample="The server maintenance is scheduled for this Sunday at 2 AM UTC.">Neutral</button>
+    </div>
+
+    <!-- Textarea Input Area -->
+    <div class="textarea-wrapper">
+      <textarea
+        id="text-input"
+        rows="4"
+        placeholder="Paste a tweet, review, or comment here (e.g. 'The delivery was quick, but the packaging was damaged.')..."
+        autofocus
+      ></textarea>
+      <div class="textarea-footer">
+        <span id="char-counter">0 chars &bull; 0 words</span>
+        <button id="analyze-btn" class="primary-button text-sm py-2 px-5">
+          <span class="btn-text">Analyze Tone</span>
+          <svg class="ml-1.5" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div id="result-container" class="results-grid hidden">
+    <!-- Primary Sentiment Card -->
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <div class="verdict-header">
+        <div>
+          <span class="sub-label">Tone Verdict</span>
+          <div class="verdict-label-wrap">
+            <span id="result-badge" class="badge-lg">Neutral</span>
+            <span id="emotion-badge" class="badge-emotion">😊 Joy &amp; Excitement</span>
+          </div>
+        </div>
+        <div class="confidence-circle-wrap">
+          <div class="confidence-val" id="result-confidence">94.2%</div>
+          <div class="confidence-sub">Confidence</div>
+        </div>
+      </div>
+
+      <!-- Polarity Intensity Gauge -->
+      <div class="polarity-gauge-section">
+        <div class="gauge-label-row">
+          <span class="gauge-label">Polarity Intensity</span>
+          <span class="gauge-value" id="intensity-value">+0.85 (Strongly Positive)</span>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-marker-center"></div>
+          <div id="gauge-fill" class="gauge-fill positive" style="width: 85%;"></div>
+        </div>
+        <div class="gauge-scale">
+          <span>-1.0 Negative</span>
+          <span>0.0 Neutral</span>
+          <span>+1.0 Positive</span>
+        </div>
+      </div>
+
+      <!-- Class Probability Distribution Bars -->
+      <div class="prob-distribution">
+        <span class="prob-title">Ensemble Probability Distribution</span>
+        <div class="prob-row">
+          <span class="prob-label">Positive</span>
+          <div class="prob-track"><div id="prob-bar-pos" class="prob-fill bg-positive" style="width: 0%;"></div></div>
+          <span id="prob-val-pos" class="prob-percent">0%</span>
+        </div>
+        <div class="prob-row">
+          <span class="prob-label">Neutral</span>
+          <div class="prob-track"><div id="prob-bar-neu" class="prob-fill bg-neutral" style="width: 0%;"></div></div>
+          <span id="prob-val-neu" class="prob-percent">0%</span>
+        </div>
+        <div class="prob-row">
+          <span class="prob-label">Negative</span>
+          <div class="prob-track"><div id="prob-bar-neg" class="prob-fill bg-negative" style="width: 0%;"></div></div>
+          <span id="prob-val-neg" class="prob-percent">0%</span>
+        </div>
+      </div>
+
+      <!-- Feedback Loop Actions -->
+      <div class="feedback-row">
+        <span class="feedback-prompt">Is this estimation accurate?</span>
+        <div class="feedback-btns">
+          <button class="btn-ghost-sm feedback-btn" data-action="thumbs_up" title="Accurate tone estimation">👍 Accurate</button>
+          <button class="btn-ghost-sm feedback-btn" data-action="thumbs_down" title="Inaccurate tone estimation">👎 Inaccurate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explainability & Aspect Breakdown Card -->
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <!-- Token Explainability -->
+      <div class="explain-section">
+        <div class="section-title-wrap">
+          <h3 class="section-title">Word-Level Explainability</h3>
+          <span class="section-badge">Model Attention</span>
+        </div>
+        <p class="explain-subtitle">Language signals showing positive (green) and negative (red) influential keywords:</p>
+        <div id="token-highlight-box" class="token-highlight-box">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- Aspect-Based Sentiment Breakdown -->
+      <div class="aspects-section">
+        <div class="section-title-wrap">
+          <h3 class="section-title">Aspect-Based Sentiment</h3>
+          <span class="section-badge">Topics</span>
+        </div>
+        <div id="aspects-list" class="aspects-grid">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}How it works — feeling?{% endblock %}
+
+{% block content %}
+<div class="space-y-12">
+  <!-- Hero Section -->
+  <section class="hero-section px-5 py-12 sm:py-16 rounded-2xl">
+    <div class="mx-auto max-w-3xl text-center">
+      <div class="eyebrow text-xs uppercase mb-3">A practical guide</div>
+      <h1 class="text-4xl font-bold leading-tight tracking-tight sm:text-6xl text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Tone is a clue.<br class="hidden sm:block" /> Context is the <span class="muted">story.</span>
+      </h1>
+      <p class="mt-5 max-w-2xl mx-auto text-base leading-7 muted sm:text-lg">
+        Sentiment analysis estimates whether language leans positive, negative, or neutral. It offers a useful first impression — not a definitive reading of someone’s intent.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3 Principles Grid -->
+  <section class="grid gap-5 lg:grid-cols-3">
+    <article class="panel p-6">
+      <div class="eyebrow text-xs">01 / NOTICE</div>
+      <h2 class="mt-4 text-xl font-semibold text-[var(--color-text)]" style="font-family:var(--font-heading)">Look for language signals</h2>
+      <p class="mt-3 text-sm leading-7 muted">Words such as “delightful” or “frustrating” can point toward a feeling. The analyzer looks for familiar positive and negative expressions.</p>
+    </article>
+    <article class="panel p-6">
+      <div class="eyebrow text-xs">02 / WEIGH</div>
+      <h2 class="mt-4 text-xl font-semibold text-[var(--color-text)]" style="font-family:var(--font-heading)">Read words together</h2>
+      <p class="mt-3 text-sm leading-7 muted">Negation and emphasis can change a signal. “Very good” carries more intensity than “good,” while “not good” shifts its direction.</p>
+    </article>
+    <article class="panel p-6">
+      <div class="eyebrow text-xs">03 / REFLECT</div>
+      <h2 class="mt-4 text-xl font-semibold text-[var(--color-text)]" style="font-family:var(--font-heading)">Treat the result as a guide</h2>
+      <p class="mt-3 text-sm leading-7 muted">Humor, cultural nuance, and surrounding context can be difficult to interpret. A person’s careful reading remains essential.</p>
+    </article>
+  </section>
+
+  <!-- Privacy & Limits Panel -->
+  <section class="pb-6">
+    <div class="soft-panel grid gap-8 p-6 sm:p-9 md:grid-cols-2 md:items-center">
+      <div>
+        <div class="eyebrow text-xs mb-2">PRIVACY &amp; LIMITS</div>
+        <h2 class="text-2xl font-bold text-[var(--color-text)] mb-3" style="font-family:var(--font-heading)">A private first impression.</h2>
+        <p class="text-sm leading-7 muted">This system runs lightweight language analysis with multi-model NLP. Use the result as a starting point, not a replacement for context or human judgment.</p>
+      </div>
+      <div class="panel p-5">
+        <div class="mono text-xs muted">Example sentence</div>
+        <p class="mt-3 text-sm leading-6 text-[var(--color-text)]">“The delivery was quick, but the packaging was damaged.”</p>
+        <div class="mt-4 flex items-center gap-3">
+          <div class="h-2 flex-1 overflow-hidden rounded-full" style="background:var(--color-border)">
+            <div class="h-full w-1/2 rounded-full" style="background:var(--color-neutral)"></div>
+          </div>
+          <span class="text-xs muted font-mono">Mixed</span>
+        </div>
+        <p class="mt-3 text-xs leading-5 muted">Positive and negative clues balance each other out.</p>
+      </div>
+    </div>
+    <div class="mt-8 text-center">
+      <a href="/" class="primary-button inline-flex items-center gap-2 px-6 py-3 font-semibold no-underline">
+        Try the analyzer <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  </section>
+</div>
+{% endblock %}

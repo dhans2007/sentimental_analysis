@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Auto-Responder &amp; Action AI — feeling?{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Hero Section -->
+  <section class="hero-section px-5 py-10 sm:py-14 rounded-2xl text-center">
+    <div class="mx-auto max-w-3xl">
+      <div class="eyebrow text-xs uppercase mb-3 flex items-center justify-center gap-2">
+        <span>AI Smart Triage &amp; Auto-Responder</span>
+        <span class="badge-tag positive text-[10px] py-0.5 px-2">Gemini AI Ready</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Customer Feedback <span class="muted">Actions &amp; AI Reply.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed muted">
+        Analyze customer tickets, extract engineering/billing action plans, and craft contextual, human-like responses powered by Generative AI.
+      </p>
+    </div>
+  </section>
+
+  <!-- Input Panel -->
+  <div class="panel p-6 sm:p-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-[var(--color-border)]">
+      <div>
+        <h2 class="text-xl font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Customer Feedback / Ticket</h2>
+        <span class="text-xs muted">Paste review or customer message below</span>
+      </div>
+      <div id="ai-status-indicator" class="text-xs flex items-center gap-1.5 text-[var(--color-text-muted)] bg-[var(--color-surface)] px-3 py-1.5 rounded-lg border border-[var(--color-border)]">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="ai-status-text">AI Auto-Reply Active</span>
+      </div>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="preset-chips mb-4">
+      <span class="chips-label">Scenarios:</span>
+      <button class="chip" data-ticket="The app keeps crashing on payment checkout and charged my card twice! Fix this immediately or I am filing a dispute!">🚨 Payment Bug</button>
+      <button class="chip" data-ticket="My order arrived two days late and the screen was cracked. Support has ignored my emails for 48 hours.">⚠️ Broken Delivery</button>
+      <button class="chip" data-ticket="Best customer support team ever! Alex resolved my complex migration in 15 minutes. Truly 10/10 service.">🌟 5-Star Praise</button>
+      <button class="chip" data-ticket="When is the dark mode update scheduled to release for Android tablets?">📋 Product Inquiry</button>
+    </div>
+
+    <div class="textarea-wrapper mb-4">
+      <textarea
+        id="assistant-input"
+        rows="4"
+        placeholder="Paste customer review, tweet, or support ticket here..."
+      >The app keeps crashing on payment checkout and charged my card twice! Fix this immediately or I am filing a dispute!</textarea>
+      <div class="textarea-footer">
+        <span id="assistant-char-counter">0 characters</span>
+      </div>
+    </div>
+
+    <!-- Optional Custom Instruction / Steering -->
+    <div class="mb-4">
+      <label for="custom-instruction-input" class="block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1.5">
+        Custom Guidance / Business Rules (Optional)
+      </label>
+      <input
+        type="text"
+        id="custom-instruction-input"
+        placeholder="e.g. 'Offer a 20% discount code SAVE20', 'Request order number and phone call', 'Ask for log files'..."
+        class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] focus:outline-none focus:border-[var(--color-accent)] transition-colors"
+      />
+    </div>
+
+    <div class="flex justify-end">
+      <button id="generate-reply-btn" class="primary-button text-sm py-2.5 px-6">
+        <span>Generate AI Plan &amp; Reply</span>
+        <svg class="ml-1.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Assistant Output Results -->
+  <div id="assistant-results-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden">
+    <!-- Action Plan & Urgency Card -->
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-[var(--color-border)] mb-4">
+          <div>
+            <span class="sub-label">Triage &amp; Risk</span>
+            <div class="flex items-center gap-2 mt-1.5">
+              <span id="urgency-badge" class="urgency-badge critical">CRITICAL 🚨</span>
+              <span id="assistant-sentiment-badge" class="badge-tag negative">Negative</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="sub-label">Detected Tone</span>
+            <div id="assistant-emotion-text" class="font-bold text-sm text-[var(--color-text)] mt-1">Frustration &amp; Anger</div>
+          </div>
+        </div>
+
+        <!-- Action Items Checklist -->
+        <div class="mb-5">
+          <h3 class="text-sm font-semibold text-[var(--color-text)] mb-3 uppercase tracking-wider font-mono">Recommended Team Action Items</h3>
+          <div id="action-items-list" class="space-y-2">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Aspects Detected -->
+      <div class="pt-4 border-t border-[var(--color-border)]">
+        <span class="sub-label">Tagged Aspects</span>
+        <div id="assistant-aspects-pills" class="flex flex-wrap gap-1.5 mt-2">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto-Generated Response Drafts Card -->
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[var(--color-border)] mb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Auto-Generated Reply</h3>
+              <span id="reply-engine-pill" class="text-[10px] px-2 py-0.5 rounded-full font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">AI Generated</span>
+            </div>
+            <span class="text-xs muted">Click to edit directly or switch tones</span>
+          </div>
+          <!-- Reply Tone Tabs -->
+          <div class="flex gap-1.5">
+            <button class="draft-tab active" data-tone="empathetic">Empathetic</button>
+            <button class="draft-tab" data-tone="professional">Professional</button>
+            <button class="draft-tab" data-tone="solution">Solution</button>
+          </div>
+        </div>
+
+        <!-- Reply Content Box -->
+        <div class="reply-content-box mb-4">
+          <textarea id="reply-text-display" rows="9" class="w-full bg-transparent text-sm leading-relaxed text-[var(--color-text)] border-none resize-none focus:outline-none" placeholder="AI draft will appear here..."></textarea>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[var(--color-border)]">
+        <span class="text-xs muted">✏️ Fully editable before sending</span>
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <button id="copy-reply-btn" class="secondary-button text-xs py-2 px-4 gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span id="copy-btn-label">Copy Draft</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

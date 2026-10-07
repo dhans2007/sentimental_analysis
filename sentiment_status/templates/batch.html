@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Batch File Analysis — feeling?{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Hero Section -->
+  <section class="hero-section px-5 py-10 sm:py-14 rounded-2xl text-center">
+    <div class="mx-auto max-w-3xl">
+      <div class="eyebrow text-xs uppercase mb-3">Bulk Ingestion</div>
+      <h1 class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Batch Tone <span class="muted">Processing.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed muted">
+        Upload a CSV, TXT, or JSON file with customer reviews, tweets, or feedback records for batch tone estimation and enriched data export.
+      </p>
+    </div>
+  </section>
+
+  <!-- Upload Area -->
+  <div class="panel p-6 sm:p-8">
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept=".csv,.txt,.json" class="file-input-hidden" />
+      <div class="drop-zone-icon flex justify-center">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <h3 class="text-lg sm:text-xl font-bold mt-3 mb-1 text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Drag &amp; drop CSV, JSON, or TXT file here
+      </h3>
+      <p class="text-xs sm:text-sm muted mb-5">
+        Supports up to 500 rows per batch &bull; Formats: <code class="mono text-xs">.csv</code>, <code class="mono text-xs">.json</code>, <code class="mono text-xs">.txt</code>
+      </p>
+      <div class="flex items-center justify-center gap-3 flex-wrap">
+        <button id="browse-btn" class="primary-button text-sm py-2 px-5">Browse Files</button>
+        <button id="download-sample-btn" class="secondary-button text-sm py-2 px-5">Download Sample CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Progress Bar (Hidden by default) -->
+  <div id="batch-progress-card" class="panel p-6 progress-card hidden">
+    <div class="progress-header flex justify-between font-mono text-xs muted mb-2">
+      <span id="progress-status-text">Processing batch file...</span>
+      <span id="progress-percentage">0%</span>
+    </div>
+    <div class="progress-track">
+      <div id="batch-progress-bar" class="progress-fill" style="width: 0%;"></div>
+    </div>
+  </div>
+
+  <!-- Batch Results Summary & Table (Hidden by default) -->
+  <div id="batch-results-section" class="space-y-6 hidden">
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="panel p-4 flex flex-col">
+        <span class="stat-mini-label">Total Processed</span>
+        <span class="stat-mini-val" id="batch-total-count">0</span>
+      </div>
+      <div class="panel p-4 flex flex-col border-l-4 border-[var(--color-positive)]">
+        <span class="stat-mini-label text-pos">Positive</span>
+        <span class="stat-mini-val text-pos" id="batch-pos-count">0</span>
+      </div>
+      <div class="panel p-4 flex flex-col border-l-4 border-[var(--color-neutral)]">
+        <span class="stat-mini-label text-neu">Neutral</span>
+        <span class="stat-mini-val text-neu" id="batch-neu-count">0</span>
+      </div>
+      <div class="panel p-4 flex flex-col border-l-4 border-[var(--color-negative)]">
+        <span class="stat-mini-label text-neg">Negative</span>
+        <span class="stat-mini-val text-neg" id="batch-neg-count">0</span>
+      </div>
+    </div>
+
+    <!-- Table Header & Controls -->
+    <div class="panel p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-[var(--color-border)]">
+        <div class="table-search-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="batch-filter-input" placeholder="Search rows..." />
+        </div>
+        <div class="flex items-center gap-3">
+          <select id="batch-sentiment-filter" class="select-dropdown">
+            <option value="all">All Sentiments</option>
+            <option value="positive">Positive Only</option>
+            <option value="neutral">Neutral Only</option>
+            <option value="negative">Negative Only</option>
+          </select>
+          <button id="batch-export-csv-btn" class="secondary-button text-xs py-2 px-4 gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Processed Table -->
+      <div class="overflow-x-auto">
+        <table class="modern-table" id="batch-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Text Content</th>
+              <th>Sentiment</th>
+              <th>Confidence</th>
+              <th>Emotion</th>
+              <th>Aspects</th>
+            </tr>
+          </thead>
+          <tbody id="batch-table-body">
+            <!-- Populated dynamically by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

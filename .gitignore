@@ -1,0 +1,25 @@
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment and sensitive keys
+.env
+*.env.local
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Large binary models (>100MB rejected by GitHub)
+*.safetensors
+model.safetensors
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

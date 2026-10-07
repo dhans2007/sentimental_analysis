@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Feeling? Design System & Theme CSS
+   ========================================================================== */
+
+:root {
+  /* Dark Mode Default */
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-soft: #1b212a;
+  --color-surface-hover: #21262d;
+  --color-border: rgba(240, 246, 252, 0.1);
+  --color-border-subtle: rgba(240, 246, 252, 0.05);
+  --color-border-active: #58a6ff;
+
+  --color-text: #f0f6fc;
+  --color-muted: #8b949e;
+  --color-subtle: #6e7681;
+
+  --color-primary: #f0f6fc;
+  --color-primary-contrast: #0d1117;
+  --color-primary-hover: #ffffff;
+  --color-primary-accent: #388bfd;
+
+  --color-positive: #3fb950;
+  --color-positive-bg: rgba(63, 185, 80, 0.12);
+  --color-positive-border: rgba(63, 185, 80, 0.35);
+
+  --color-neutral: #d29922;
+  --color-neutral-bg: rgba(210, 153, 34, 0.12);
+  --color-neutral-border: rgba(210, 153, 34, 0.35);
+
+  --color-negative: #f85149;
+  --color-negative-bg: rgba(248, 81, 73, 0.12);
+  --color-negative-border: rgba(248, 81, 73, 0.35);
+
+  --radius: 12px;
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.2);
+  --shadow-panel: 0 10px 30px color-mix(in srgb, var(--color-primary) 4%, transparent);
+}
+
+[data-theme="light"] {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f1f5f9;
+  --color-surface-hover: #e2e8f0;
+  --color-border: rgba(15, 23, 42, 0.08);
+  --color-border-subtle: rgba(15, 23, 42, 0.04);
+  --color-border-active: #0284c7;
+
+  --color-text: #0f172a;
+  --color-muted: #64748b;
+  --color-subtle: #94a3b8;
+
+  --color-primary: #0f172a;
+  --color-primary-contrast: #ffffff;
+  --color-primary-hover: #1e293b;
+  --color-primary-accent: #0284c7;
+
+  --color-positive: #10b981;
+  --color-positive-bg: rgba(16, 185, 129, 0.1);
+  --color-positive-border: rgba(16, 185, 129, 0.3);
+
+  --color-neutral: #f59e0b;
+  --color-neutral-bg: rgba(245, 158, 11, 0.1);
+  --color-neutral-border: rgba(245, 158, 11, 0.3);
+
+  --color-negative: #ef4444;
+  --color-negative-bg: rgba(239, 68, 68, 0.1);
+  --color-negative-border: rgba(239, 68, 68, 0.3);
+
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+  --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* Base resets & typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header & Navigation */
+.site-header {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.brand-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: calc(var(--radius) * .55);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  transition: transform 0.2s ease;
+}
+
+.brand-mark:hover {
+  transform: scale(1.05);
+}
+
+/* Hero Section */
+.hero-section {
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--color-primary) 6%, transparent), transparent 60%);
+  text-align: center;
+}
+
+.eyebrow,
+.mono {
+  font-family: var(--font-mono);
+}
+
+.eyebrow {
+  color: var(--color-muted);
+  letter-spacing: .1em;
+  font-weight: 600;
+}
+
+/* Panels */
+.panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.soft-panel {
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) * .72);
+  background: color-mix(in srgb, var(--color-bg) 60%, var(--color-surface));
+}
+
+.muted {
+  color: var(--color-muted);
+}
+
+/* Buttons */
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: calc(var(--radius) * .55);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  transition: transform .18s ease, opacity .18s ease, background-color .18s ease;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+  opacity: .92;
+}
+
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: calc(var(--radius) * .55);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: all .18s ease;
+  padding: 0.65rem 1.15rem;
+  font-size: 0.875rem;
+}
+
+.secondary-button:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-muted);
+}
+
+.footer-line {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.rounded-full {
+  border-radius: calc(var(--radius) * 2) !important;
+}

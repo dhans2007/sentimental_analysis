@@ -1,0 +1,11 @@
+applications:
+  - name: social-sentiment-app
+    memory: 256M
+    instances: 1
+    buildpacks:
+      - python_buildpack
+    command: gunicorn app:app --bind 0.0.0.0:$PORT
+    env:
+      MONGO_URI: ((mongo_uri))
+    services:
+      - sentiment-mongodb

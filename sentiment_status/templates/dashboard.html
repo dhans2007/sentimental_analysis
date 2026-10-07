@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Dashboard &amp; Trends — feeling?{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Hero Section -->
+  <section class="hero-section px-5 py-10 sm:py-14 rounded-2xl text-center">
+    <div class="mx-auto max-w-3xl">
+      <div class="eyebrow text-xs uppercase mb-3">Analytics Overview</div>
+      <h1 class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight text-[var(--color-text)]" style="font-family:var(--font-heading)">
+        Sentiment &amp; Tone <span class="muted">Trends.</span>
+      </h1>
+      <p class="mt-4 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed muted">
+        Aggregate intelligence across all analyzed texts, emotions, aspect sentiments, and daily timeline trends.
+      </p>
+    </div>
+  </section>
+
+  <!-- KPI Top Stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="panel p-5 flex items-center gap-4">
+      <div class="kpi-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div>
+        <span class="stat-mini-label">Total Analyses</span>
+        <div class="text-2xl font-bold text-[var(--color-text)]" id="kpi-total" style="font-family:var(--font-heading)">0</div>
+      </div>
+    </div>
+
+    <div class="panel p-5 flex items-center gap-4">
+      <div class="kpi-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <div>
+        <span class="stat-mini-label">Positive Lean</span>
+        <div class="text-2xl font-bold text-pos" id="kpi-pos-percent" style="font-family:var(--font-heading)">0%</div>
+      </div>
+    </div>
+
+    <div class="panel p-5 flex items-center gap-4">
+      <div class="kpi-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <div>
+        <span class="stat-mini-label">Neutral / Mixed</span>
+        <div class="text-2xl font-bold text-neu" id="kpi-neu-percent" style="font-family:var(--font-heading)">0%</div>
+      </div>
+    </div>
+
+    <div class="panel p-5 flex items-center gap-4">
+      <div class="kpi-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+      </div>
+      <div>
+        <span class="stat-mini-label">Negative Ratio</span>
+        <div class="text-2xl font-bold text-neg" id="kpi-neg-percent" style="font-family:var(--font-heading)">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1: Distribution Doughnut & Timeline -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <div class="mb-4 pb-3 border-b border-[var(--color-border)]">
+        <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Overall Sentiment Breakdown</h3>
+        <span class="text-xs muted">Class distribution proportion</span>
+      </div>
+      <div class="chart-canvas-wrap doughnut-wrap flex items-center justify-center">
+        <canvas id="sentimentDistributionChart"></canvas>
+      </div>
+    </div>
+
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <div class="mb-4 pb-3 border-b border-[var(--color-border)]">
+        <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Timeline Evolution</h3>
+        <span class="text-xs muted">Historical sentiment trend</span>
+      </div>
+      <div class="chart-canvas-wrap flex items-center justify-center">
+        <canvas id="sentimentTimelineChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2: Aspect Sentiment & Emotion -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <div class="mb-4 pb-3 border-b border-[var(--color-border)]">
+        <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Aspect-Based Topic Volume</h3>
+        <span class="text-xs muted">Mentions by category</span>
+      </div>
+      <div class="chart-canvas-wrap flex items-center justify-center">
+        <canvas id="aspectChart"></canvas>
+      </div>
+    </div>
+
+    <div class="panel p-6 sm:p-7 flex flex-col justify-between">
+      <div class="mb-4 pb-3 border-b border-[var(--color-border)]">
+        <h3 class="text-base font-bold text-[var(--color-text)]" style="font-family:var(--font-heading)">Emotional Tone Breakdown</h3>
+        <span class="text-xs muted">Dominant sentiment emotions</span>
+      </div>
+      <div class="chart-canvas-wrap flex items-center justify-center">
+        <canvas id="emotionChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
